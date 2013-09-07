@@ -28,9 +28,9 @@ class SYW(ShoppingAPI):
             entry['title'] = item['name']
             entry['image'] = item['imageUrl']
             entry['link']  = 'http://shopyourway.com' + item['productUrl']
-            if item['price']:
+            try:
               entry['price'] = item['price']
-            else:
+            except KeyError:
               entry['price'] = '11'
             res.append(entry)
         return res
