@@ -102,7 +102,7 @@ class SYWAPI_Session:
 
     def get_products_by_tags(self, token, tags):
         hash_str=self.generate_hash(token)
-        api_params=urllib.urlencode({'token':token,'hash':hash_str,'tagIds':",".join(tags), 'orderBy':'like'})
+        api_params=urllib.urlencode({'token':token,'hash':hash_str,'tagIds':",".join(tags), 'orderBy':'like', 'limit': '5'})
         api_url=self.api_baseurl+'/products/get-by-tags?'+api_params
         resp,content=httplib2.Http().request(api_url,"get")
         return json.loads(content)
