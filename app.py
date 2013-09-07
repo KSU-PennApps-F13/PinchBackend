@@ -1,5 +1,6 @@
-from flask import Flask, request, render_template
-import API.core as API
+from flask import Flask, request, render_template, abort
+from API.core import ShoppingAPIFactory
+import API.InstallAPI
 import simplejson as json
 import os
 
@@ -10,7 +11,8 @@ def query():
     # deny access for GET
     if request == 'GET': abort(401)
 
-    query_dict = json.loads(request.content)
+    print("apis=",str(ShoppingAPIFactory._apis.values()))
+    query_dict = request.form
     try:
         kw = query_dict['kw']
         cat = query_dict['cat']
@@ -18,15 +20,15 @@ def query():
         # return bad request for invalid data
         abort(400)
     # get all supported APIs
-    apis = API.ShoppingAPIFactory.all_registered_apis()
+    apis = ShoppingAPIFactory.all_registered_apis()
     for a in apis:
-        a.prepare(query)
+        a.prepare(query_dict)
         a.start()
-    API.ShoppingAPIFactory.joinall()
+    ShoppingAPIFactory.joinall()
     # collect result
     res = []
     for a in apis:
-        res.append(a.reformatted_result())
+        res.append(a.result())
     # render
     return json.dumps(res)
 

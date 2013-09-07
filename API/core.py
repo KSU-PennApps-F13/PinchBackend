@@ -6,26 +6,36 @@ from urllib import urlencode
 from urllib2 import urlopen
 from abc import ABCMeta,abstractmethod
 
+gevent.monkey.patch_all()
+
 class InvalidReq(Exception):
     def __str__():
         return u'Not a valid request'
 
 class ShoppingAPIFactory(object):
+    _apis = {}
     def __init__(self):
-        self._apis = []
+        pass
 
-    def register(self, method, const, *args, **kargs):
+    @staticmethod
+    def register(method, const, *args, **kargs):
         """ Register a new API """
         apiInit = Functor(const, *args, **kargs)
-        self._apis[method] = apiInit
-        setattr(self, method, apiInit)
+        ShoppingAPIFactory._apis[method] = apiInit()
+        setattr(ShoppingAPIFactory, method, apiInit)
 
-    def unregister(self, method):
+    @staticmethod
+    def unregister(method):
         """ Unregister an API """
-        delattr(self, method)
+        delattr(ShoppingAPIFactory, method)
 
-    def all_registered_apis(self):
-        return self._apis
+    @staticmethod
+    def all_registered_apis():
+        return ShoppingAPIFactory._apis.values()
+
+    @staticmethod
+    def joinall():
+        gevent.joinall(ShoppingAPIFactory._apis.values())
 
 class Functor(object):
     def __init__(self, fun, *args, **kargs):
@@ -48,25 +58,22 @@ class ShoppingAPI(gevent.Greenlet):
         self._set_category(query['cat'])
         self._set_keyword_list(query['kw'])
 
-    @abstractmethod
     def _set_category(self, cat):
         """ Add categories info to the query """
-        pass
-
-    @abstractmethod
+        self._cat = cat
     def _set_keyword_list(self, kw):
         """ Add keywords to the query"""
-        pass
+        self._kw = kw
 
     @abstractmethod
     def result(self):
         """ Parse reply data and give product info"""
         # play with self._reply
-        pass
+        return self._reply
 
     def _run(self):
         """ the result is a file object that can do read() """
-        #if not (self._query and self._baseurl and self._method):
+        #if not (self._query and self.V_baseurl and self._method):
             #raise InvalidReq()
         #if self._method == 'GET':
             #req = urlopen('?'.join([self._baseurl, urlencode(self._args)]))
