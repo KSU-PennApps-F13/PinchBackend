@@ -14,5 +14,5 @@ class Ebay(ShoppingAPI):
     def _set_keyword_list(self, kw):
         self._kw = kw
     def _run(self):
-        self._api.execute('findItemsAdvanced', {'keywords': self._cat })
+        self._api.execute('findItemsAdvanced', {'keywords': self._kw })
         return json.dumps(self._api.response_dict(), sort_keys = False, indent=2)

@@ -11,6 +11,18 @@ def hello(categories):
   api.execute('findItemsAdvanced', {'keywords': categories})
   return json.dumps(api.response_dict(), sort_keys = False, indent=2)
 
+@app.route('q', methods=['POST'])
+def query(q):
+    # just return bad request for GET
+    if request == 'GET': abort(400)
+
+    query_dict = json.loads(qstr)
+    try:
+        kw = query_dict['kw']
+        cat = query_dict['cat']
+    except TypeError:
+        # return bad request for invalid data
+        abort(400)
 
 if __name__ == "__main__":
   port = int(os.environ.get('PORT', 5000))

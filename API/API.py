@@ -24,12 +24,16 @@ class ShoppingAPIFactory(object):
         """ Unregister an API """
         delattr(self, method)
 
+    def all_registered_apis(self):
+        return self._apis
+
 class Functor(object):
     def __init__(self, fun, *args, **kargs):
         assert callable(fun)
         self._args = args
         self._kargs = kargs
         self._fun = fun
+
     def __call__(self, *args, **kargs):
         return self._fun(*self._args, **self._kargs)
 
