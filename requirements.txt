@@ -3,3 +3,4 @@ ebaysdk
 pyyaml
 simplejson
 gevent
+httplib2
