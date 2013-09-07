@@ -10,7 +10,7 @@ class Ebay(ShoppingAPI):
         ShoppingAPI.__init__(self)
         self._api = ebay.finding(appid=appid)
     def _run(self):
-        self._api.execute('findItemsAdvanced', {'keywords': self._kw, 'entriesPerPage':10 })
+        self._api.execute('findItemsAdvanced', {'keywords': self._kw})
         reply = self._api.response_dict()
         self._reply = self._api.response_dict()
         #write_file('ebay.json', str(self._reply[0]['searchResult']['item'][0]))
