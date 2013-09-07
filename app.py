@@ -6,11 +6,8 @@ import os
 app = Flask(__name__)
 api = finding(appid='danielgu-f316-4fd2-9373-2db1b6883df2')
 
-
 @app.route("/<categories>")
-def hello(categories=None):
-  if not categories:
-    return []
+def hello(categories):
   api.execute('findItemsAdvanced', {'keywords': categories})
   return json.dumps(api.response_dict(), sort_keys = False, indent=2)
 
