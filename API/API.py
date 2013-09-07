@@ -33,24 +33,6 @@ class Functor(object):
     def __call__(self, *args, **kargs):
         return self._fun(*self._args, **self._kargs)
 
-class ShoppingAPIObserver(object):
-    def __init__(self):
-        _observer = []
-
-    def attach(self, observer):
-        if not observer in _observer:
-            _observer.append(observer)
-
-    def detach(self, observer):
-        try:
-            _observer.remove(observer)
-        except ValueError:
-            pass
-
-    def RunQuery(self, query):
-        for req in _observer:
-            req.start()
-
 class ShoppingAPI(gevent.Greenlet):
     __metaclass__ = ABCMeta
     def __init__(self, *args, **kargs):
