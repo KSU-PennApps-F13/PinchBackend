@@ -1,6 +1,7 @@
 import ebaysdk as ebay
 import json
-import API
+import API.core
+from ebaysdk import finding
 
 class Ebay(ShoppingAPI):
     def __init__(self, appid):

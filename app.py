@@ -1,29 +1,40 @@
-from flask import Flask
-from ebaysdk import finding
+from flask import Flask, request, render_template
+import API.core as API
 import simplejson as json
 import os
 
 app = Flask(__name__)
-api = finding(appid='danielgu-f316-4fd2-9373-2db1b6883df2')
 
-@app.route("/<categories>")
-def hello(categories):
-  api.execute('findItemsAdvanced', {'keywords': categories})
-  return json.dumps(api.response_dict(), sort_keys = False, indent=2)
+@app.route('/q', methods=["POST"])
+def query():
+    # deny access for GET
+    if request == 'GET': abort(401)
 
-@app.route('q', methods=['POST'])
-def query(q):
-    # just return bad request for GET
-    if request == 'GET': abort(400)
-
-    query_dict = json.loads(qstr)
+    query_dict = json.loads(request.content)
     try:
         kw = query_dict['kw']
         cat = query_dict['cat']
     except TypeError:
         # return bad request for invalid data
         abort(400)
+    # get all supported APIs
+    apis = API.ShoppingAPIFactory.all_registered_apis()
+    for a in apis:
+        a.prepare(query)
+        a.start()
+    API.ShoppingAPIFactory.joinall()
+    # collect result
+    res = []
+    for a in apis:
+        res.append(a.reformatted_result())
+    # render
+    return json.dumps(res)
+
+@app.route('/search')
+def search():
+    if request.method == 'GET':
+        return render_template('form.html')
 
 if __name__ == "__main__":
   port = int(os.environ.get('PORT', 5000))
-  app.run(host='0.0.0.0', port=port)
+  app.run(host='0.0.0.0', port=port, debug=True)
