@@ -13,6 +13,7 @@ def query():
     try:
         data = json.loads(request.data)
         req = data['data']
+        print req
     except (ValueError, KeyError, TypeError):
         abort(400)
     # get all supported APIs
