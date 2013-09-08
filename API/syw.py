@@ -27,12 +27,17 @@ class SYW(ShoppingAPI):
 
         for item in self._reply:
             entry = {}
-            entry['title'] = item['name']
-            entry['image'] = item['imageUrl']
-            entry['link']  = 'http://shopyourway.com' + item['productUrl']
+            if not isinstance(item, dict):
+              continue
             try:
+              entry['title'] = item['name']
+              entry['image'] = item['imageUrl']
+              entry['link']  = 'http://shopyourway.com' + item['productUrl']
               entry['price'] = item['price']
-            except KeyError:
+            except KeyError, TypeError:
+              entry['title'] = "Some Title"
+              entry['image'] = "http://c.shld.net/rpx/i/s/i/spin/image/spin_prod_500334201"
+              entry['link']  = "http://shopyourway.com/sharp-60-class-aquos-1080p-120hz-led-smart-hdtv-lc60le640u/163097737"
               entry['price'] = '11'
             res.append(entry)
         return res
