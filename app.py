@@ -10,7 +10,6 @@ app = Flask(__name__)
 def query():
     # deny access for GET
     if request == 'GET': abort(401)
-    print str(request)
     query_dict = request.form
     try:
         kw = query_dict['kw']
