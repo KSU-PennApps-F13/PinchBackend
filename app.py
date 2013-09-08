@@ -12,7 +12,7 @@ def query():
     if request == 'GET': abort(401)
     try:
         data = json.loads(request.data)
-        req = data['kw']
+        req = data['data']
     except (ValueError, KeyError, TypeError):
         abort(400)
     # get all supported APIs

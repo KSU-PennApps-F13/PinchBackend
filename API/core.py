@@ -57,7 +57,8 @@ class ShoppingAPI(gevent.Greenlet):
     def prepare(self, query):
         query_list = []
         for q in query:
-          query_list.append(q['data'])
+          query_list.append(q['name'])
+        print query_list
         self._set_keyword_list(query_list)
 
     def _set_keyword_list(self, kw):
