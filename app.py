@@ -1,7 +1,7 @@
 from flask import Flask, request, render_template, abort
 from API.core import ShoppingAPIFactory
 import API.InstallAPI
-import simplejson as json
+import json
 import os
 
 app = Flask(__name__)
@@ -12,6 +12,8 @@ def query():
     if request == 'GET': abort(401)
     try:
         data = json.loads(request.data)
+        print data
+
         req = data['kw']
     except (ValueError, KeyError, TypeError):
         abort(400)
