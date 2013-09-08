@@ -17,12 +17,13 @@ class SYW(ShoppingAPI):
         self.token = self.session.get_offline_token(self.user_id)
 
     def _run(self):
-        tags = self.session.get_tags_for_query(self.token, self._kw)
+        tags = self.session.get_tags_for_query(self.token, " ".join(self._kw))
         self._reply = self.session.get_products_by_tags(self.token, self.session.get_tags(tags))
         return self._reply
 
     def result(self):
         res = []
+        #print(str(self._reply))
 
         for item in self._reply:
             entry = {}

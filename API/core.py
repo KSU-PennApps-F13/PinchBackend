@@ -14,6 +14,7 @@ class InvalidReq(Exception):
 
 class ShoppingAPIFactory(object):
     _apis = {}
+    _greenlets = []
     def __init__(self):
         pass
 
@@ -21,7 +22,7 @@ class ShoppingAPIFactory(object):
     def register(method, const, *args, **kargs):
         """ Register a new API """
         apiInit = Functor(const, *args, **kargs)
-        ShoppingAPIFactory._apis[method] = apiInit()
+        ShoppingAPIFactory._apis[method] = apiInit
         setattr(ShoppingAPIFactory, method, apiInit)
 
     @staticmethod
@@ -34,8 +35,19 @@ class ShoppingAPIFactory(object):
         return ShoppingAPIFactory._apis.values()
 
     @staticmethod
+    def startall():
+        for g in ShoppingAPIFactory._apis.values():
+            task = g()
+            ShoppingAPIFactory._greenlets.append(task)
+        return ShoppingAPIFactory._greenlets
+
+    @staticmethod
     def joinall():
-        gevent.joinall(ShoppingAPIFactory._apis.values())
+        gevent.joinall(ShoppingAPIFactory._greenlets)
+
+    @staticmethod
+    def killall():
+        gevent.killall(ShoppingAPIFactory._greenlets)
 
 class Functor(object):
     def __init__(self, fun, *args, **kargs):
@@ -57,7 +69,7 @@ class ShoppingAPI(gevent.Greenlet):
     def prepare(self, query):
         query_list = []
         for q in query:
-          query_list.append(q['data'])
+          query_list.append(q['name'])
         self._set_keyword_list(query_list)
 
     def _set_keyword_list(self, kw):
