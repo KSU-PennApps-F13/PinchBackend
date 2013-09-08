@@ -10,8 +10,7 @@ app = Flask(__name__)
 def query():
     # deny access for GET
     if request == 'GET': abort(401)
-
-    print("apis=",str(ShoppingAPIFactory._apis.values()))
+    print str(request)
     query_dict = request.form
     try:
         kw = query_dict['kw']
