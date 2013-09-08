@@ -19,8 +19,12 @@ class Ebay(ShoppingAPI):
 
     def result(self):
         res = []
+        try:
+            items = self._reply['searchResult']['item']
+        except:
+            return None
 
-        for item in self._reply['searchResult']['item']:
+        for item in items:
           if item.country == "US":
             entry = {}
             entry['title'] = item.title
