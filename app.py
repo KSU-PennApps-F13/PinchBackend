@@ -12,17 +12,14 @@ def query():
     if request == 'GET': abort(401)
     try:
         data = json.loads(request.data)
-        print data
-
         req = data['kw']
     except (ValueError, KeyError, TypeError):
         abort(400)
     # get all supported APIs
     apis = ShoppingAPIFactory.all_registered_apis()
     for a in apis:
-        for r in req:
-          a.prepare(r)
-          a.start()
+        a.prepare(req)
+        a.start()
     ShoppingAPIFactory.joinall()
     # collect result
     res = []

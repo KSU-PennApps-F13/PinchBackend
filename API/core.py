@@ -55,12 +55,11 @@ class ShoppingAPI(gevent.Greenlet):
         self._kargs = kargs
 
     def prepare(self, query):
-        self._set_category(query['cat'])
-        self._set_keyword_list(query['kw'])
+        query_list = []
+        for q in query:
+          query_list.append(q['data'])
+        self._set_keyword_list(query_list)
 
-    def _set_category(self, cat):
-        """ Add categories info to the query """
-        self._cat = cat
     def _set_keyword_list(self, kw):
         """ Add keywords to the query"""
         self._kw = kw
