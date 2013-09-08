@@ -9,36 +9,32 @@ app = Flask(__name__)
 
 @app.route('/q', methods=["POST"])
 def query():
-    # deny access for GET
-    if request == 'GET': abort(401)
-    print("data=", request.data)
-    try:
-        data = json.loads(request.data)
-        req = data['data']
-        print('req=', req)
-    except (ValueError, KeyError, TypeError):
-        abort(400)
-    # get all supported APIs
-    apiFunctors = ShoppingAPIFactory.all_registered_apis()
-    apis = []
-    for api in apiFunctors:
-        apis.append(api())
-    for a in apis:
-        a.prepare(req)
-        a.start()
-    gevent.joinall(apis)
-    # collect result
-    res = []
-    for a in  apis:
-        r = a.result()
-        if r: res.append(r)
-    # render
-    return json.dumps(res)
+  if request == 'GET': 
+    abort(401)
+  try:
+    data = json.loads(request.data)
+    req = data['data']
+  except (ValueError, KeyError, TypeError):
+    abort(400)
 
-@app.route('/search')
-def search():
-    if request.method == 'GET':
-        return render_template('form.html')
+  apiFunctors = ShoppingAPIFactory.all_registered_apis()
+  apis = []
+  for api in apiFunctors:
+    apis.append(api())
+
+  for a in apis:
+    a.prepare(req)
+    a.start()
+  gevent.joinall(apis)
+
+  res = []
+  for a in  apis:
+    r = a.result()
+    if r:
+      res.append(r)
+
+  return json.dumps(res)
+
 
 if __name__ == "__main__":
   port = int(os.environ.get('PORT', 5000))
