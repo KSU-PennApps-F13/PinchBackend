@@ -26,7 +26,7 @@ def query():
     res = []
     for a in apis:
         res.append(a.result())
-    # render
+    print res
     return json.dumps(res)
 
 @app.route('/search')
