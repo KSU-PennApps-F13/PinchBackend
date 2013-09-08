@@ -19,9 +19,10 @@ class Ebay(ShoppingAPI):
 
     def result(self):
         res = []
-        entry = {}
+
         for item in self._reply['searchResult']['item']:
           if item.country == "US":
+            entry = {}
             entry['title'] = item.title
             entry['image'] = item.galleryURL
             entry['link'] = item.viewItemURL

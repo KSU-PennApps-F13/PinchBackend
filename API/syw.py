@@ -23,8 +23,9 @@ class SYW(ShoppingAPI):
 
     def result(self):
         res = []
-        entry = {}
+
         for item in self._reply:
+            entry = {}
             entry['title'] = item['name']
             entry['image'] = item['imageUrl']
             entry['link']  = 'http://shopyourway.com' + item['productUrl']
