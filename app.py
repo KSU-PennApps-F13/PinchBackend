@@ -10,18 +10,17 @@ app = Flask(__name__)
 def query():
     # deny access for GET
     if request == 'GET': abort(401)
-    query_dict = request.form
     try:
-        kw = query_dict['kw']
-        cat = query_dict['cat']
-    except TypeError:
-        # return bad request for invalid data
+        data = json.loads(request.data)
+        req = data['kw']
+    except (ValueError, KeyError, TypeError):
         abort(400)
     # get all supported APIs
     apis = ShoppingAPIFactory.all_registered_apis()
     for a in apis:
-        a.prepare(query_dict)
-        a.start()
+        for r in req:
+          a.prepare(r)
+          a.start()
     ShoppingAPIFactory.joinall()
     # collect result
     res = []
